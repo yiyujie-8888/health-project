@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import LoginView from '../views/LoginView.vue'
-import PlatformSelectView from '../views/PlatformSelectView.vue'
+import HomeView from '../Pages/HomeView.vue'
+import LoginView from '../Pages/LoginView.vue'
+import PlatformSelectView from '../Pages/PlatformSelectView.vue'
 
 const routes = [
   {
