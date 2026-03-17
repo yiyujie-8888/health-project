@@ -1,12 +1,16 @@
 <template>
-  <div>
+  <div class="login-container">
     <h1>登录页</h1>
-    <!-- 新增：用户名/密码输入框 -->
-        <div>
-          <input v-model="username" placeholder="请输入用户名" />
-          <input v-model="password" type="password" placeholder="请输入密码" />
-        </div>
-        <button @click="handleLogin">登录</button>
+    <!-- 用户名输入框 -->
+    <div class="input-item">
+      <input v-model="username" placeholder="请输入用户名" type="text" />
+    </div>
+    <!-- 密码输入框 -->
+    <div class="input-item">
+      <input v-model="password" placeholder="请输入密码" type="password" />
+    </div>
+    <!-- 登录按钮 -->
+    <button @click="handleLogin">登录</button>
   </div>
 </template>
 
@@ -15,6 +19,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
 import { login } from '../api/userApi' // 引入登录接口函数
+import request from '@/utils/request'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -24,17 +29,12 @@ const username = ref('')
 const password = ref('')
 
 const handleLogin = async () => {
-  try {
-	// 校验输入（可选，避免空参数调用）
-    if (!username.value || !password.value) {
-      console.log('用户名/密码不能为空！')
-      return
-    }	  
+  try {  
     // 1. 调用登录接口
-    const res = await login({
-      username: username.value,
-      password: password.value
-    })
+	const res = await request.post('/api/user/login', {
+         username: 'admin',
+         password: '123456'
+		})
     // 2. 打印返回结果
     console.log('登录接口返回结果：', res)
     

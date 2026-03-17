@@ -6,7 +6,7 @@ import { ElMessage } from 'element-plus' // 可选：推荐用element-plus的提
 // 1. 创建axios实例并配置基础参数
 const service = axios.create({
   //baseURL: import.meta.env.VITE_API_BASE_URL || '/api', // 基础请求地址（推荐从环境变量读取）
-  baseURL: '/api',
+  baseURL: '',
   timeout: 10000, // 超时时间：10秒
   headers: {
     'Content-Type': 'application/json;charset=utf-8' // 默认请求头
