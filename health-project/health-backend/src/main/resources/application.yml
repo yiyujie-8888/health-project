@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: health-backend
+  # 数据库配置 
+# 数据库配置
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: 123456
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  security:
+    user:
+      name: admin
+      password: 123456
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update # 开发阶段自动更新表结构，生产环境建议 validate 或 manual
+
+# JWT 配置
+jwt:
+  secret: "HealthProjectSecretKey2026_VeryLongAndSecureString_ForSigningTokens" # 至少32位，建议放在环境变量
+  expiration: 604800000 # 7天 (毫秒)
+  header: Authorization
+  prefix: "Bearer "
