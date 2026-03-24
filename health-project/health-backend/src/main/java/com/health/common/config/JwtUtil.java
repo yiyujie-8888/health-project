@@ -4,6 +4,8 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -42,21 +44,24 @@ public class JwtUtil {
     /**
      * 从 Token 中提取用户名
      */
-    public String extractUsername(String token) {
+    @Nullable
+    public String extractUsername(@NonNull String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
     /**
      * 从 Token 中提取用户ID
      */
-    public Integer extractUserId(String token) {
+    @Nullable
+    public Integer extractUserId(@NonNull String token) {
         return extractClaim(token, claims -> claims.get("userId", Integer.class));
     }
 
     /**
      * 从 Token 中提取指定声明
      */
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    @Nullable
+    public <T> T extractClaim(@NonNull String token, @NonNull Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
@@ -64,14 +69,16 @@ public class JwtUtil {
     /**
      * 生成 Token（不含额外声明）
      */
-    public String generateToken(String username) {
+    @NonNull
+    public String generateToken(@NonNull String username) {
         return generateToken(new HashMap<>(), username);
     }
 
     /**
      * 生成 Token（含额外声明）
      */
-    public String generateToken(Map<String, Object> extraClaims, String username) {
+    @NonNull
+    public String generateToken(@NonNull Map<String, Object> extraClaims, @NonNull String username) {
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(username)
@@ -84,7 +91,8 @@ public class JwtUtil {
     /**
      * 生成 Token（含用户ID）
      */
-    public String generateToken(String username, Integer userId) {
+    @NonNull
+    public String generateToken(@NonNull String username, @NonNull Integer userId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
         return generateToken(claims, username);
@@ -93,36 +101,38 @@ public class JwtUtil {
     /**
      * 验证 Token 是否有效
      */
-    public boolean isTokenValid(String token, String username) {
+    public boolean isTokenValid(@NonNull String token, @NonNull String username) {
         final String extractedUsername = extractUsername(token);
-        return (extractedUsername.equals(username)) && !isTokenExpired(token);
+        return (extractedUsername != null && extractedUsername.equals(username)) && !isTokenExpired(token);
     }
 
     /**
      * 验证 Token 是否有效（仅检查过期）
      */
-    public boolean isTokenValid(String token) {
+    public boolean isTokenValid(@NonNull String token) {
         return !isTokenExpired(token);
     }
 
     /**
      * 检查 Token 是否过期
      */
-    private boolean isTokenExpired(String token) {
+    private boolean isTokenExpired(@NonNull String token) {
         return extractExpiration(token).before(new Date());
     }
 
     /**
      * 提取 Token 过期时间
      */
-    private Date extractExpiration(String token) {
+    @NonNull
+    private Date extractExpiration(@NonNull String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
     /**
      * 解析 Token 获取所有声明
      */
-    private Claims extractAllClaims(String token) {
+    @NonNull
+    private Claims extractAllClaims(@NonNull String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignInKey())
                 .build()
@@ -133,7 +143,8 @@ public class JwtUtil {
     /**
      * 从请求头中提取 Token（去掉 Bearer 前缀）
      */
-    public String extractTokenFromHeader(String authHeader) {
+    @Nullable
+    public String extractTokenFromHeader(@Nullable String authHeader) {
         if (authHeader != null && authHeader.startsWith(tokenPrefix)) {
             return authHeader.substring(tokenPrefix.length());
         }
@@ -143,6 +154,7 @@ public class JwtUtil {
     /**
      * 获取 HTTP 请求头名称
      */
+    @NonNull
     public String getHeaderName() {
         return headerName;
     }
@@ -150,6 +162,7 @@ public class JwtUtil {
     /**
      * 获取 Token 前缀
      */
+    @NonNull
     public String getTokenPrefix() {
         return tokenPrefix;
     }
@@ -160,9 +173,26 @@ public class JwtUtil {
      * @param thresholdMillis 阈值（毫秒）
      * @return true-即将过期，false-未即将过期
      */
-    public boolean isTokenNearExpiry(String token, long thresholdMillis) {
+    public boolean isTokenNearExpiry(@NonNull String token, long thresholdMillis) {
         Date expiration = extractExpiration(token);
         long remainingTime = expiration.getTime() - System.currentTimeMillis();
         return remainingTime < thresholdMillis;
+    }
+
+    // ========== 新增方法：兼容 JwtAuthenticationFilter ==========
+    
+    /**
+     * 验证 Token 是否有效（简化版，用于过滤器）
+     */
+    public boolean validateToken(@NonNull String token) {
+        return !isTokenExpired(token);
+    }
+
+    /**
+     * 从 Token 中提取用户名（兼容过滤器调用）
+     */
+    @Nullable
+    public String getUsernameFromToken(@NonNull String token) {
+        return extractUsername(token);
     }
 }

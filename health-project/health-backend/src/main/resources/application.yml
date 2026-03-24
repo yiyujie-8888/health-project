@@ -27,6 +27,6 @@ spring:
 # JWT 配置
 jwt:
   secret: "HealthProjectSecretKey2026_VeryLongAndSecureString_ForSigningTokens" # 至少32位，建议放在环境变量
-  expiration: 604800000 # 7天 (毫秒)
+  expiration: 604800000 # 7天 
   header: Authorization
   prefix: "Bearer "
