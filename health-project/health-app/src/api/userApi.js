@@ -27,25 +27,6 @@ export const login = (params) => {
 }
 
 /**
- * 注册接口
- * @param {Object} params - 注册参数
- * @param {string} params.username - 用户名
- * @param {string} params.password - 密码
- * @param {string} params.phone - 手机号（示例）
- * @returns {Promise} - 返回接口响应数据
- */
-export const register = (params) => {
-  // 模拟接口响应
-  return new Promise((resolve) => {
-    resolve({
-      code: 200,
-      msg: '注册成功',
-      data: null
-    })
-  })
-}
-
-/**
  * 用户信息接口 - /api/user/info
  * @returns {Promise} - 返回接口响应数据
  */
@@ -66,9 +47,45 @@ export const getUserInfo = () => {
   })
 }
 
+/**
+ * 注册接口
+ * @param {Object} params - 注册参数
+ * @param {string} params.username - 用户名
+ * @param {string} params.password - 密码
+ * @param {string} params.phone - 手机号（示例）
+ * @returns {Promise} - 返回接口响应数据
+ */
+export const register = (params) => {
+  // 模拟接口响应
+  return new Promise((resolve) => {
+    resolve({
+      code: 200,
+      msg: '注册成功',
+      data: null
+    })
+  })
+}
+
+/**
+ * 退出登录接口
+ * @param {string} token - 用户token
+ * @returns {Promise} - 返回接口响应数据
+ */
+export const logout = (token) => {
+  // 模拟接口响应
+  return new Promise((resolve) => {
+    resolve({
+      code: 200,
+      msg: '退出成功',
+      data: null
+    })
+  })
+}
+
 // 导出所有接口函数（也可按需导出）
 export default {
   login,
   register,
-  getUserInfo
+  getUserInfo,
+  logout
 }
