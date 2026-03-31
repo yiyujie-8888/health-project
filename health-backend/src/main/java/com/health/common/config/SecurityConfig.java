@@ -43,12 +43,19 @@ public class SecurityConfig {
                 .frameOptions(frame -> frame.disable())
             )
             
-            // 7. 异常处理（可选，建议添加）
+            // 7. 异常处理（返回统一的Result格式）
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setStatus(401);
                     response.setContentType("application/json");
-                    response.getWriter().write("{\"error\": \"Unauthorized\"}");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"code\":401,\"msg\":\"未登录或Token无效\",\"data\":null}");
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.setStatus(403);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"code\":403,\"msg\":\"权限不足\",\"data\":null}");
                 })
             );
         

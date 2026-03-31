@@ -4,29 +4,28 @@ server:
 spring:
   application:
     name: health-backend
-  # 数据库配置 
-# 数据库配置
+  
+  # MySQL数据库配置（请根据实际情况修改）
   datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password: 123456
-    driver-class-name: org.h2.Driver
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-  # security:
-  #   user:
-  #     name: admin
-  #     password: 123456
+    url: jdbc:mysql://localhost:3306/health_db?useSSL=false&serverTimezone=UTC&characterEncoding=utf8
+    username: root
+    password: your_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: update # 开发阶段自动更新表结构，生产环境建议 validate 或 manual
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
 
 # JWT 配置
 jwt:
   secret: "HealthProjectSecretKey2026_VeryLongAndSecureString_ForSigningTokens" # 至少32位，建议放在环境变量
-  expiration: 604800000 # 7天 
+  expiration: 604800000 # 7天（毫秒）
+  refresh-expiration: 1209600000 # 14天（毫秒），刷新Token的有效期
+  refresh-threshold: 86400000 # 1天（毫秒），当Token剩余时间小于此值时可刷新
   header: Authorization
   prefix: "Bearer "
